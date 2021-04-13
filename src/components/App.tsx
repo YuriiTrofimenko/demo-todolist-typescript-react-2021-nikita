@@ -3,19 +3,32 @@ import React/* , { useState, useEffect } */ from 'react'
 import Footer from './common/Footer'
 import Header from './common/Header'
 import { CommonStore } from '../stores/CommonStore'
+import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core'
 
 // интерфейс той части внешних параметров,
 // значения которых передаются в компонент App неявно,
 // внедрением зависимости, то есть, например,
 // нигде в коде представлений других компонент не встречается запись вида:
 // <App commonStore={commonStore} />
-interface IInjectedProps extends IProps {
+interface IInjectedProps extends IProps, WithStyles<typeof styles> {
+  // неявно, из интерфейса WithStyles, добавлено свойство classes
   commonStore: CommonStore
 }
 interface IProps {}
 interface IState {
   date: string
 }
+
+const styles = (theme: Theme) => createStyles({
+  loading: {
+    backgroundColor: 'yellow',
+    position: 'fixed',
+    top: 10,
+    left: '50%',
+    alignContent: 'center',
+    padding: 10
+  }
+})
 
 /* Class Root Component */
 @inject('commonStore')
@@ -61,7 +74,8 @@ class App extends React.Component<IProps, IState> {
   // ...
   // View
   render () {
-    const loadingBlock = this.injected.commonStore.loading ? <div>Loading ...</div> : ''
+    const {classes} = this.injected
+    const loadingBlock = this.injected.commonStore.loading ? <div className={classes.loading}>Loading ...</div> : ''
     return (
       <>
         {/*<h1>Hello React!</h1>*/}
@@ -78,4 +92,4 @@ class App extends React.Component<IProps, IState> {
   }
 }
 
-export default App
+export default withStyles(styles)(App)
